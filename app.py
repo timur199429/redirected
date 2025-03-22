@@ -16,7 +16,9 @@ app.include_router(main_router)
 # Монтируем папку со статическими файлами
 app.mount("/success", StaticFiles(directory="success"), name="success")
 
-
+@app.get('/')
+async def index():
+    return {'message':'ok'}
 
 
 if __name__ == "__main__":
