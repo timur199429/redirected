@@ -20,5 +20,5 @@ app.mount("/success", StaticFiles(directory="success"), name="success")
 
 
 if __name__ == "__main__":
-    port = 3478
-    app.run(debug=True,host='0.0.0.0',port=port)
+    import uvicorn
+    uvicorn.run(app, host='0.0.0.0', port=3478)
