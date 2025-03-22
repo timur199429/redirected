@@ -11,7 +11,7 @@ async def lifespan(app: FastAPI):
     yield
     print("server is stopping")
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 app.include_router(main_router)
 # Монтируем папку со статическими файлами
 app.mount("/success", StaticFiles(directory="success"), name="success")
