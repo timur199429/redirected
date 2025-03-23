@@ -88,7 +88,7 @@ async def click(
 
     # Собираем query_params для передачи в URL редиректа
     query_params = request.query_params
-    redirect_url = f"https://bucket.act-redir.space/{offer_category}/{landing_name}/index.html?{query_params}"
+    redirect_url = f"https://bucket.act-redir.space/{offer_category}/{landing_name}/index.html?{query_params}&path={offer_category}{landing_name}"
 
     # Перенаправляем пользователя
     response = Response(
@@ -118,9 +118,10 @@ async def submit_form(request: Request):
     name = form_data.get("name")
     phone = form_data.get("phone")
     click_id = form_data.get("click_id")
+    path = form_data.get('path')
     
     # Формируем сообщение для Telegram
-    message = f"Новый лид!\nИмя: {name}\nТелефон: {phone}\nclick_id: {click_id}\nReferer: {full_url}"
+    message = f"Новый лид!\nИмя: {name}\nТелефон: {phone}\nclick_id: {click_id}\nPath: {path}"
     
     # Отправляем сообщение в Telegram
     send_telegram_message(message)
