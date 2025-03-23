@@ -112,7 +112,7 @@ async def submit_form(request: Request):
     # # referer
     # referer_url = request.headers.get("Referer")
     # Получаем полный URL, с которого был отправлен запрос
-    full_url = str(request.url)
+    full_url = str(request.headers)
     
     # Извлекаем имя и телефон
     name = form_data.get("name")
