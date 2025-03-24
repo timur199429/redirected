@@ -8,3 +8,4 @@ psycopg2-binary
 python-multipart
 python-dotenv
 pg8000
+APScheduler

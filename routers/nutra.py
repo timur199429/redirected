@@ -111,14 +111,12 @@ async def submit_form(request: Request):
     
     # # referer
     # referer_url = request.headers.get("Referer")
-    # Получаем полный URL, с которого был отправлен запрос
-    full_url = str(request.url.path)
     
     # Извлекаем имя и телефон
     name = form_data.get("name")
     phone = form_data.get("phone")
     click_id = form_data.get("click_id")
-    path = form_data.get('path')
+    path = form_data.get("path")
     
     # Формируем сообщение для Telegram
     message = f"Новый лид!\nИмя: {name}\nТелефон: {phone}\nclick_id: {click_id}\nPath: {path}"
