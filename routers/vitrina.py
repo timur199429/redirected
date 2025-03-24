@@ -20,8 +20,8 @@ class VitrinaClicks(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     user_ip: str | None = None
     country_code: str | None = None
-    offer_category: str | None = None
-    landing_name: str | None = None
+    vitrina_name: str | None = None
+    news_hash: str | None = None
     oneprofit_flow_id: str | None = None
     teaser_id: str | None = None #
     site_id: str | None = None #
