@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  app:
+    build: .  # Собирает образ из Dockerfile
+    ports:
+      - "3478:3478"  # Пробрасывает порт наружу
+    restart: unless-stopped  # Автоперезапуск при падении
+    environment:
+      - PYTHONUNBUFFERED=1  # Для корректного вывода логов
