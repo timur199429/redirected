@@ -1,4 +1,4 @@
-from sqlmodel import SQLModel
+from sqlmodel import SQLModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, Request
 
@@ -8,6 +8,7 @@ clickback = APIRouter()
 class ClickbackOneprofit(SQLModel, table=True):
     __tablename__ = 'clickback_oneprofit'
 
+    id: int = Field(default=None, primary_key=True)
     amount: float
     site_id: str
     teaser_id: str
