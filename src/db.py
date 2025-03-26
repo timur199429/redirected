@@ -9,7 +9,12 @@ from dotenv import load_dotenv; load_dotenv()
 URL_DATABASE = f"postgresql+asyncpg://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
 
 # engine = create_engine(URL_DATABASE)
-engine = create_async_engine(URL_DATABASE, echo=False)  # echo=True для логов
+engine = create_async_engine(URL_DATABASE, pool_size=20,
+    max_overflow=10,
+    pool_timeout=30,
+    pool_recycle=3600, 
+    echo=False)  # echo=True для логов
+
 
 # Асинхронная фабрика сессий
 async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
@@ -24,4 +29,7 @@ async def init_db():
 async def get_session():
     async with async_session() as session:
         yield session
+
+
+
 
