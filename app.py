@@ -3,12 +3,12 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from src.funcs import get_domain, init_scheduler_domain
 from src.routers import main_router
-from src.db import db_init
+from src.db import init_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):    
     print("Server is starting...")
-    db_init()
+    await init_db()
     get_domain()
     init_scheduler_domain()
     yield

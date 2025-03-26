@@ -1,16 +1,16 @@
 import asyncio
 import datetime as dt
-from sqlmodel import Field, SQLModel, Session
+from sqlmodel import Field, SQLModel
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi import BackgroundTasks, Depends, Response, status, Request, APIRouter
+from fastapi import BackgroundTasks, Depends, Request, APIRouter
+from sqlalchemy.ext.asyncio import AsyncSession
+
 
 from src.funcs import get_location, parse_user_agent, send_telegram_message
 from src.db import get_session
 
 nutra_router = APIRouter()
 
-# Define a timezone with UTC+3 offset
-utc_plus_3 = dt.timezone(dt.timedelta(hours=3))
 
 class NutraClicks(SQLModel, table=True):
     __tablename__ = 'NutraClicks'
@@ -26,7 +26,7 @@ class NutraClicks(SQLModel, table=True):
     click_id: str | None
     source_name: str | None
     block_id: str | None
-    cpc: str | None
+    cpc: float | None
     category_id: str | None
     browser: str | None
     browser_version: str | None
@@ -35,16 +35,23 @@ class NutraClicks(SQLModel, table=True):
     device: str | None
     city: str | None
     region: str | None
-    created_at: dt.datetime = Field(default_factory=lambda: dt.datetime.now(utc_plus_3))  # Add a timestamp
+    created_at: dt.datetime = Field(default_factory=dt.datetime.now)
 
 
-async def log_click_to_db(session: Session, headers: dict, query_params:dict, offer_category: str, landing_name: str):
+async def log_click_to_db(session: AsyncSession, headers: dict, query_params:dict, offer_category: str, landing_name: str):
     user_agent = headers.get('user-agent')
     user_ip = headers.get('x-real-ip')
     country_code, city, region = await get_location(user_ip)
     user_agent_parsed = parse_user_agent(user_agent)
     
-    click = NutraClicks(
+    
+    try:
+        cpc = float(query_params.get('cpc'))
+    except (TypeError, ValueError):
+        cpc = 0  # Default value if parsing fails
+    
+    try:
+        new_click = NutraClicks(
         user_ip=user_ip,
         country_code=country_code,
         offer_category=offer_category,
@@ -55,22 +62,23 @@ async def log_click_to_db(session: Session, headers: dict, query_params:dict, of
         click_id=query_params.get('click_id'),
         source_name=query_params.get('source_name'),
         block_id=query_params.get('block_id'),
-        cpc=query_params.get('cpc'),
+        cpc=cpc,
         category_id=query_params.get('category_id'),
         browser=user_agent_parsed.get('browser'),
-        browser_version=user_agent_parsed.get('browser_version'),
+        browser_version=str(user_agent_parsed.get('browser_version')),
         os=user_agent_parsed.get('os'),
-        os_version=user_agent_parsed.get('os_version'),
+        os_version=str(user_agent_parsed.get('os_version')),
         device=user_agent_parsed.get('device'),
         city=city,
         region=region
-    )
-
-    
-    session.add(click)
-    session.commit()
-    session.refresh(click)
-    print("Click logged in the database")
+    )  # Ваша SQLModel-модель
+        session.add(new_click)
+        await session.commit()
+    except Exception as e:
+        await session.rollback()
+        raise e
+    finally:
+        await session.close()  # Важно!
 
 @nutra_router.get("/nutra/{offer_category}/{landing_name}")
 async def track_and_redirect(
@@ -78,7 +86,7 @@ async def track_and_redirect(
     background_tasks: BackgroundTasks,
     offer_category: str,
     landing_name: str,
-    session: Session = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
 ):
     # Добавляем задачу в фон (FastAPI сам запустит её асинхронно)
     background_tasks.add_task(
