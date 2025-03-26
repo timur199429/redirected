@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from routers.nutra import nutra_router
-from routers.vitrina import vitrina_router
+from src.routers.nutra import nutra_router
+from src.routers.vitrina import vitrina_router
 
 
 main_router = APIRouter()

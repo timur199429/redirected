@@ -1,9 +1,9 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from funcs import get_domain, init_scheduler_domain
-from routers import main_router
-from db import db_init
+from src.funcs import get_domain, init_scheduler_domain
+from src.routers import main_router
+from src.db import db_init
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):    
@@ -18,7 +18,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.include_router(main_router)
 # Монтируем папку со статическими файлами
-app.mount("/success", StaticFiles(directory="success"), name="success")
+app.mount("/success", StaticFiles(directory="src/success"), name="success")
 
 @app.get('/')
 async def index():

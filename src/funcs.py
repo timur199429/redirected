@@ -52,7 +52,7 @@ def get_domain(domain='red.skipnews.space'):
     try:
         response = requests.get(url, allow_redirects=True)
         parsed_url = urlparse(response.url)
-        with open('domain.txt', 'w') as file:
+        with open('src/domain.txt', 'w') as file:
             file.write(parsed_url.netloc)
         print('Domain updated')
     except requests.RequestException as e:

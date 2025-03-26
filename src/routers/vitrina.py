@@ -3,8 +3,8 @@ import datetime as dt
 from sqlmodel import Field, SQLModel, Session
 from fastapi import BackgroundTasks, Depends, Response, status, Request, APIRouter
 
-from db import get_session
-from funcs import get_location, parse_user_agent
+from src.db import get_session
+from src.funcs import get_location, parse_user_agent
 
 
 
