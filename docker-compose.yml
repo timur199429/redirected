@@ -10,5 +10,3 @@ services:
     restart: unless-stopped
     environment:
       PYTHONUNBUFFERED: "1"  # Более надёжный синтаксис
-    volumes:
-      - .:/app  # Монтирование кода для разработки (опционально)
