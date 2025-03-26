@@ -2,9 +2,13 @@ version: '3.8'
 
 services:
   app:
-    build: .  # Собирает образ из Dockerfile
+    build: 
+      context: .  # Указываем путь к Dockerfile
+      dockerfile: Dockerfile  # Явно указываем файл (если нужно)
     ports:
-      - "3478:3478"  # Пробрасывает порт наружу
-    restart: unless-stopped  # Автоперезапуск при падении
+      - "3478:3478"  # host_port:container_port
+    restart: unless-stopped
     environment:
-      - PYTHONUNBUFFERED=1  # Для корректного вывода логов
+      PYTHONUNBUFFERED: "1"  # Более надёжный синтаксис
+    volumes:
+      - .:/app  # Монтирование кода для разработки (опционально)
