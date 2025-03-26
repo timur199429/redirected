@@ -6,14 +6,14 @@ from src.db import get_session
 clickback = APIRouter()
 
 class ClickbackOneprofit(SQLModel, table=True):
-    __tablename__ = 'clickback_oneprofit'
+    __tablename__ = 'ClickbackOneprofit'
 
     id: int = Field(default=None, primary_key=True)
-    amount: float
+    amount: str
     site_id: str
     teaser_id: str
     campaign_id: str
-    cpc: float
+    cpc: str
     click_id: str
     source_name: str
     created_at: str
@@ -23,11 +23,11 @@ class ClickbackOneprofit(SQLModel, table=True):
 async def oneprofit(request: Request, session:AsyncSession=Depends(get_session)):
     
     params = request.query_params
-    amount = float(params.get('amount',0))
+    amount = params.get('amount','')
     site_id = params.get('stream','')
     teaser_id = params.get('subid1','')
     campaign_id = params.get('subid2','')
-    cpc = float(params.get('subid3',0))
+    cpc = params.get('subid3','')
     click_id = params.get('subid4','')
     source_name = params.get('subid5','')
     created_at = params.get('created_at','')
@@ -50,4 +50,6 @@ async def oneprofit(request: Request, session:AsyncSession=Depends(get_session))
         raise e
     finally:
         await session.close()  # Важно!
+    
+    return {'message':'ok'}
 
