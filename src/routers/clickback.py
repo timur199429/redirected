@@ -23,11 +23,11 @@ class ClickbackOneprofit(SQLModel, table=True):
 async def oneprofit(request: Request, session:AsyncSession=Depends(get_session)):
     
     params = request.query_params
-    amount = params.get('amount','')
+    amount = float(params.get('amount',0))
     site_id = params.get('stream','')
     teaser_id = params.get('subid1','')
     campaign_id = params.get('subid2','')
-    cpc = params.get('subid3','')
+    cpc = float(params.get('subid3',0))
     click_id = params.get('subid4','')
     source_name = params.get('subid5','')
     created_at = params.get('created_at','')
